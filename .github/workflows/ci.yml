@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 저장소 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Node.js 버전 20 설정
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # 의존성 설치
+      - name: Install dependencies
+        run: npm install
+
+      # TypeScript 컴파일 (빌드)
+      - name: Build project
+        run: npm run build
+
+      # 테스트 실행
+      - name: Run tests
+        run: npm test
+

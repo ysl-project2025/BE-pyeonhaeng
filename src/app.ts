@@ -9,4 +9,6 @@ app.listen(process.env.PORT);
 
 const authRouter = require("./routes/auth")
 
-app.use("/", authRouter)
+app.use("/member", authRouter)
+
+export default app;
