@@ -10,20 +10,6 @@ describe('Member Auth Tests', () => {
     user_name: 'TestUser',
   };
 
-  // 각 테스트가 시작 전, testUser삭제
-  beforeAll(async () => {
-    await new Promise((resolve, reject) => {
-      conn.query(
-        'DELETE FROM users WHERE user_id = ?',
-        [testUser.user_id],
-        (err: any) => {
-          if (err) return reject(err);
-          resolve(true);
-        }
-      );
-    });
-  });
-
   // 모든 테스트가 끝난 후 testUser 삭제
   afterAll(async () => {
     await new Promise((resolve, reject) => {

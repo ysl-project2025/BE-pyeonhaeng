@@ -45,9 +45,9 @@ export const login = (req: Request, res: Response) => {
                 message: `${loginUser.user_name}님, 로그인 되었습니다.`
             })
         } else {
-                res.status(403).json({
-                    message : "이메일 또는 비밀번호가 틀렸습니다."
-                })
+            res.status(401).json({
+                message : "이메일 또는 비밀번호가 틀렸습니다."
+            })
         }
     })
 }   
@@ -65,7 +65,7 @@ export const register = async (req: Request, res: Response) => {
         conn.query(sql, values, (err: any, results: any) => {
             if (err) {
                     console.log(err)
-                    return res.status(400).end()
+                    return res.status(409).end() // 중복된 아이디 혹은 비밀번호
             }
             res.status(201).json(results)
         })
