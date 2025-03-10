@@ -10,26 +10,47 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: pyeonhaeng
+        ports:
+          - 3306:3306
+
     steps:
-      # 저장소 체크아웃
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Node.js 버전 20 설정
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      # 의존성 설치
       - name: Install dependencies
         run: npm install
 
-      # TypeScript 컴파일 (빌드)
       - name: Build project
         run: npm run build
 
-      # 테스트 실행
-      - name: Run tests
-        run: npm test
+      # MySQL 컨테이너가 완전히 기동할 때까지 잠시 대기
+      - name: Wait for MySQL to be ready
+        run: sleep 10
 
+      # 데이터베이스 마이그레이션 실행 (테이블 생성)
+      - name: Run migrations
+        run: npm run migrate
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: password
+          DB_PORT: 3306
+
+      - name: Run tests
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: password
+          DB_PORT: 3306
+        run: npm test
