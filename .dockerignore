@@ -1,0 +1,7 @@
+# node_modules 폴더는 따로 설치하므로 제외
+node_modules
+# 이미 빌드된 결과물(dist)도 제외
+dist
+# 기타 로그 파일 등
+npm-debug.log
+yarn-error.log
