@@ -10,18 +10,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8
-        # MySQL 컨테이너의 상태를 확인하기 위한 healthcheck 옵션 (선택)
-        options: >-
-          --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MYSQL_DATABASE: pyeonhaeng
-        ports:
-          - 3306:3306
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -37,29 +25,15 @@ jobs:
       - name: Build project
         run: npm run build
 
-      # MySQL 컨테이너가 완전히 기동할 때까지 잠시 대기
-      - name: Wait for MySQL to be ready
-        run: sleep 15
-
-        
-      # 마이그레이션 실행: DB_HOST를 "mysql"로 설정
-      - name: Run migrations
-        env:
-          DB_HOST: mysql
-          DB_USER: root
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_PORT: 3306
-        run: npm run migrate
-
-      # 테스트 실행: 역시 DB_HOST는 "mysql"이어야 합니다.
-      - name: Run tests
+      # 테스트 실행 (테스트 DB에 연결)
+      - name: Run tests on Test DB
         env:
           PORT: ${{ secrets.PORT }}
+          DB_PORT: ${{ secrets.DB_PORT }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          DB_HOST: mysql
-          DB_USER: root
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_PORT: 3306
+          DB_HOST: ${{ secrets.TEST_DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
           FRONTEND: ${{ secrets.FRONTEND }}
           FE_LOCAL: ${{ secrets.FE_LOCAL }}
         run: npm test
