@@ -13,8 +13,10 @@ jobs:
     services:
       mysql:
         image: mysql:8
+        # mysql_native_password 플러그인 문제 방지 옵션
+        options: --default-authentication-plugin=mysql_native_password
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: pyeonhaeng
         ports:
           - 3306:3306
@@ -38,14 +40,22 @@ jobs:
       - name: Wait for MySQL to be ready
         run: sleep 10
 
+      # 데이터베이스 마이그레이션 실행
+      - name: Run migrations
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: password
+          DB_PORT: 3306
+        run: npm run migrate
+
+      # 테스트 실행
       - name: Run tests
         env:
-          PORT: ${{ secrets.PORT }} 
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          FRONTEND: ${{ secrets.FRONTEND }}
-          FE_LOCAL: ${{ secrets.FE_LOCAL }}
+          PORT: 8080
+          PRIVATE_KEY: some_private_key
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: password
+          DB_PORT: 3306
         run: npm test

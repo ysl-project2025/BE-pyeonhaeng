@@ -9,7 +9,6 @@ const connection = mysql.createConnection({
   port: Number(process.env.DB_PORT),
   database: 'pyeonhaeng',
   dateStrings: true,
-  enableKeepAlive: true
 });
 
 module.exports = connection;

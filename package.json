@@ -4,7 +4,8 @@
   "scripts": {
     "build": "tsc",
     "test": "jest --config src/jest.config.ts",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "migrate": "node migrations/001_create_tables.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
