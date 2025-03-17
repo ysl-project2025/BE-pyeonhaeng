@@ -41,6 +41,7 @@ jobs:
       - name: Wait for MySQL to be ready
         run: sleep 15
 
+        
       # 마이그레이션 실행: DB_HOST를 "mysql"로 설정
       - name: Run migrations
         env:
