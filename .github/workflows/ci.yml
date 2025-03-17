@@ -40,17 +40,26 @@ jobs:
 
       # 데이터베이스 마이그레이션 실행 (테이블 생성)
       - name: Run migrations
-        run: npm run migrate
+        # 이 부분에서 GitHub Secrets를 환경변수로 주입
         env:
-          DB_HOST: 127.0.0.1
-          DB_USER: root
-          DB_PASSWORD: password
-          DB_PORT: 3306
+          PORT: ${{ secrets.PORT }} 
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          FRONTEND: ${{ secrets.FRONTEND }}
+          FE_LOCAL: ${{ secrets.FE_LOCAL }}
+        run: npm run migrate
 
       - name: Run tests
         env:
-          DB_HOST: 127.0.0.1
-          DB_USER: root
-          DB_PASSWORD: password
-          DB_PORT: 3306
+          PORT: ${{ secrets.PORT }} 
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          FRONTEND: ${{ secrets.FRONTEND }}
+          FE_LOCAL: ${{ secrets.FE_LOCAL }}
         run: npm test

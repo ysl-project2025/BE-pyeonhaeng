@@ -22,7 +22,9 @@ app.listen(port, '0.0.0.0', () => {
 });
 
 const authRouter = require("./routes/auth")
+const productRouter = require("./routes/product")
 
 app.use("/member", authRouter)
+app.use("/product", productRouter)
 
 export default app;
