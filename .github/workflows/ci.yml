@@ -38,20 +38,6 @@ jobs:
       - name: Wait for MySQL to be ready
         run: sleep 10
 
-      # 데이터베이스 마이그레이션 실행 (테이블 생성)
-      - name: Run migrations
-        # 이 부분에서 GitHub Secrets를 환경변수로 주입
-        env:
-          PORT: ${{ secrets.PORT }} 
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          FRONTEND: ${{ secrets.FRONTEND }}
-          FE_LOCAL: ${{ secrets.FE_LOCAL }}
-        run: npm run migrate
-
       - name: Run tests
         env:
           PORT: ${{ secrets.PORT }} 
