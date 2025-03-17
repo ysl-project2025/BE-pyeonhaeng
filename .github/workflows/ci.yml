@@ -9,6 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    # 외부 테스트 DB를 사용하므로 services 블록은 생략합니다.
 
     steps:
       - name: Checkout repository
@@ -25,8 +26,7 @@ jobs:
       - name: Build project
         run: npm run build
 
-      # 테스트 실행 (테스트 DB에 연결)
-      - name: Run tests on Test DB
+      - name: Run tests on External Test DB
         env:
           PORT: ${{ secrets.PORT }}
           DB_PORT: ${{ secrets.DB_PORT }}
@@ -37,3 +37,4 @@ jobs:
           FRONTEND: ${{ secrets.FRONTEND }}
           FE_LOCAL: ${{ secrets.FE_LOCAL }}
         run: npm test
+
