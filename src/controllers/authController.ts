@@ -69,8 +69,8 @@ export const register = async (req: Request, res: Response) => { // 회원가입
 
         conn.query(sql, values, (err: any, results: any) => {
             if (err) {
-                    console.log(err)
-                    return res.status(409).end() // 중복된 아이디 혹은 비밀번호
+                console.log(err)
+                return res.status(409).end() // 중복된 아이디 혹은 비밀번호
             }
             res.status(201).json(results)
         })
