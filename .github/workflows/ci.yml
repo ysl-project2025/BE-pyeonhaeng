@@ -39,7 +39,7 @@ jobs:
         run: npm test
 
       - name: Upload test results as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2  # 수정된 부분
         with:
           name: test-results
           path: ./test-results
