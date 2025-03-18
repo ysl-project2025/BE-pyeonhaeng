@@ -23,8 +23,10 @@ app.listen(port, '0.0.0.0', () => {
 
 const authRouter = require("./routes/auth")
 const productRouter = require("./routes/product")
+const reviewRouter = require("./routes/review")
 
 app.use("/member", authRouter)
 app.use("/product", productRouter)
+app.use("/review", reviewRouter)
 
 export default app;

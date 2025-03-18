@@ -28,12 +28,12 @@ jobs:
 
       - name: Run tests on External Test DB
         env:
-          PORT: ${{ secrets.PORT }}
-          DB_PORT: ${{ secrets.DB_PORT }}
+          PORT: ${{ secrets.DB_PORT }}
+          DB_PORT: 3306
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          DB_HOST: ${{ secrets.TEST_DB_HOST }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+          DB_HOST: 35.232.176.120
+          DB_USER: root
+          DB_PASSWORD: test
           FRONTEND: ${{ secrets.FRONTEND }}
           FE_LOCAL: ${{ secrets.FE_LOCAL }}
         run: npm test
