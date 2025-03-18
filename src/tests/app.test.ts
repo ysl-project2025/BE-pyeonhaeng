@@ -31,8 +31,14 @@ describe('Member Auth Tests', () => {
 
   afterEach(async () => {
     // 테스트 종료 후 사용자 데이터 삭제
-    await new Promise((resolve) => {
+    await new Promise((resolve, reject) => {
       conn.query('DELETE FROM users WHERE user_id = ?', [testUser.user_id], () => {
+        resolve(true);
+      });
+    });
+    await new Promise((resolve, reject) => {
+      conn.end((err: any) => {
+        if (err) return reject(err);
         resolve(true);
       });
     });
