@@ -12,6 +12,7 @@ if (!process.env.PRIVATE_KEY) {
 
 describe('Member Auth Tests', () => {
   let testUser: { user_id: string; user_password: string; user_name: string };
+  let connection: mysql.Connection;  // 커넥션 객체 추가
 
   beforeEach(async () => {
     // 각 테스트마다 고유한 사용자 ID 생성
@@ -22,8 +23,18 @@ describe('Member Auth Tests', () => {
     };
 
     // 테스트 시작 전 해당 사용자가 남아있다면 삭제
-    await new Promise((resolve) => {
-      conn.query('DELETE FROM users WHERE user_id = ?', [testUser.user_id], () => {
+    connection = mysql.createConnection({
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      port: Number(process.env.DB_PORT),
+      database: 'pyeonhaeng',
+      dateStrings: true,
+    });
+
+    await new Promise((resolve, reject) => {
+      connection.query('DELETE FROM users WHERE user_id = ?', [testUser.user_id], (err) => {
+        if (err) return reject(err);
         resolve(true);
       });
     });
@@ -32,14 +43,17 @@ describe('Member Auth Tests', () => {
   afterEach(async () => {
     // 테스트 종료 후 사용자 데이터 삭제
     await new Promise((resolve, reject) => {
-      conn.query('DELETE FROM users WHERE user_id = ?', [testUser.user_id], () => {
+      connection.query('DELETE FROM users WHERE user_id = ?', [testUser.user_id], (err) => {
+        if (err) return reject(err);
         resolve(true);
       });
     });
-    await new Promise((resolve, reject) => {
-      conn.end((err: any) => {
+
+    // DB 연결 종료
+    await new Promise<void>((resolve, reject) => {
+      connection.end((err) => {
         if (err) return reject(err);
-        resolve(true);
+        resolve();
       });
     });
   });
@@ -78,7 +92,6 @@ describe('Member Auth Tests', () => {
 
   // 4) 중복 회원가입 시도 케이스
   it('중복 회원가입 시도 케이스', async () => {
-    // 동일한 testUser로 두 번 등록 시도
     const firstRes = await request(app)
       .post('/member/register')
       .send(testUser);
@@ -91,7 +104,6 @@ describe('Member Auth Tests', () => {
 
   // 5) 회원 정보 조회 성공 케이스
   it('회원 정보 조회 성공 케이스', async () => {
-    // 회원가입 및 로그인 진행
     await request(app).post('/member/register').send(testUser);
     const loginRes = await request(app)
       .post('/member/login')
@@ -99,7 +111,6 @@ describe('Member Auth Tests', () => {
         user_id: testUser.user_id,
         user_password: testUser.user_password,
       });
-    // 쿠키에서 token 추출 (예: "token=xxx; Path=/; HttpOnly")
     const cookies = loginRes.headers['set-cookie'];
     let token = '';
     if (cookies && cookies[0]) {
@@ -199,14 +210,12 @@ describe('Member Auth Tests', () => {
 });
 
 describe('Product API Tests', () => {
-  // 인증을 위한 테스트용 사용자 (고유 ID 사용)
   let testUser = {
     user_id: `prodUser_${Date.now()}_${Math.floor(Math.random() * 10000)}`,
     user_password: 'prodPassword',
     user_name: 'ProdUser',
   };
 
-  // 테스트용 상품 데이터 (product_id는 숫자형)
   const testProduct = {
     product_id: 123,
     product_name: 'Test Product',
@@ -217,9 +226,7 @@ describe('Product API Tests', () => {
 
   let token = '';
 
-  // 테스트 시작 전에 사용자 등록/로그인 및 상품 삽입
   beforeAll(async () => {
-    // 회원 등록 및 로그인
     await request(app).post('/member/register').send(testUser);
     const loginRes = await request(app)
       .post('/member/login')
@@ -231,7 +238,7 @@ describe('Product API Tests', () => {
     if (cookies && cookies[0]) {
       token = cookies[0].split(';')[0].split('=')[1];
     }
-    // 테스트 상품 삽입
+
     const freshConn = mysql.createConnection({
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
@@ -261,7 +268,6 @@ describe('Product API Tests', () => {
     freshConn.end();
   });
 
-  // 테스트 종료 후 테스트 상품 삭제
   afterAll(async () => {
     const freshConn = mysql.createConnection({
       host: process.env.DB_HOST,
