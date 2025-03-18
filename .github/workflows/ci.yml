@@ -38,3 +38,8 @@ jobs:
           FE_LOCAL: ${{ secrets.FE_LOCAL }}
         run: npm test
 
+      - name: Upload test results as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: ./test-results
