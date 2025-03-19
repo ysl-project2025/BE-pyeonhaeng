@@ -28,7 +28,7 @@ jobs:
 
       - name: Run tests on External Test DB
         env:
-          PORT: ${{ secrets.DB_PORT }}
+          PORT: ${{ secrets.PORT }}
           DB_PORT: 3306
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           DB_HOST: 35.232.176.120
@@ -37,9 +37,3 @@ jobs:
           FRONTEND: ${{ secrets.FRONTEND }}
           FE_LOCAL: ${{ secrets.FE_LOCAL }}
         run: npm test
-
-      - name: Upload test results as artifact
-        uses: actions/upload-artifact@v2  # 수정된 부분
-        with:
-          name: test-results
-          path: ./test-results
